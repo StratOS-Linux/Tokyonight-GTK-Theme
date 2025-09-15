@@ -18,19 +18,9 @@ prepare() {
   cp -ra $startdir/icons $srcdir/
   cp -ra $startdir/themes $srcdir/
 }
-
 package() {
-    # docs
-    # install -D -m0644 -t "${pkgdir}/usr/share/doc/${pkgname}" README.md
-    # install -D -m0644 -t "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
-
-    # themes
     dist="${pkgdir}/usr/share/themes"
     mkdir -p "${dist}"
-    cd themes
-    ./install.sh --dest "${dist}" --tweaks storm macos outline float -l -c dark
-
-    # icons
     dist="${pkgdir}/usr/share/icons"
     mkdir -p "${dist}"
     cd ../icons

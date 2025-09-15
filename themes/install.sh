@@ -547,13 +547,13 @@ link_libadwaita() {
 	local THEME_DIR="${1}/${2}${3}${4}${5}${6}"
 
 	rm -rf "${HOME}/.config/gtk-4.0/"{assets,gtk.css,gtk-dark.css}
-
-	echo -e "\nLink '$THEME_DIR/gtk-4.0' to '${HOME}/.config/gtk-4.0' for libadwaita..."
-
-	mkdir -p "${HOME}/.config/gtk-4.0"
-	ln -sf "${THEME_DIR}/gtk-4.0/assets" "${HOME}/.config/gtk-4.0/assets"
-	ln -sf "${THEME_DIR}/gtk-4.0/gtk.css" "${HOME}/.config/gtk-4.0/gtk.css"
-	ln -sf "${THEME_DIR}/gtk-4.0/gtk-dark.css" "${HOME}/.config/gtk-4.0/gtk-dark.css"
+	# This is fine and dandy, but TODO need to figure out how to make this occur OUTSIDE of package() too... 
+	echo -e "\n\"Link\" '$THEME_DIR/gtk-4.0' to '/etc/skel/.config/gtk-4.0' for libadwaita..."
+	pkgdir="$(realpath -s ${REPO_DIR}/../pkg)"
+	sudo mkdir -p "$pkgdir/etc/skel/.config/gtk-4.0" 2>/dev/null
+	install -dm777 "${THEME_DIR}/gtk-4.0/assets" "$pkgdir/etc/skel/.config/gtk-4.0/assets" 2>/dev/null
+	install -m777 "${THEME_DIR}/gtk-4.0/gtk.css" "$pkgdir/etc/skel/.config/gtk-4.0/gtk.css" 2>/dev/null
+	install -m777 "${THEME_DIR}/gtk-4.0/gtk-dark.css" "$pkgdir/etc/skel/.config/gtk-4.0/gtk-dark.css" 2>/dev/null
 }
 
 link_theme() {

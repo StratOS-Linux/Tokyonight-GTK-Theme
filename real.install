@@ -1,0 +1,5 @@
+post_install() {
+        echo "==> Installing TokyoNight theme"
+	./install.sh --tweaks storm macos outline float -l -c dark
+        echo "==> Done."
+}
