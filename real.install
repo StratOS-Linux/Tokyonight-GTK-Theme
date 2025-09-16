@@ -1,5 +1,10 @@
 post_install() {
-        echo "==> Installing TokyoNight theme"
-	./install.sh --tweaks storm macos outline float -l -c dark
-        echo "==> Done."
+  echo "==> Installing TokyoNight theme"
+  # sudo -u $(logname) 
+  /usr/local/bin/install.sh --tweaks storm macos outline float -l -c dark # >/dev/null 2>/dev/null
+  echo "==> Done."
+  sudo rm -rf /usr/local/bin/install.sh /usr/local/bin/gtkrc.sh
+  echo "Copying libadwaita theme..."
+  cp -r /etc/skel/.config/gtk-4.0/ /home/$(logname)/.config/ 2>/dev/null
+  echo "==> If you have installed the stratos-bin package, you may run 'StratOS-configure-gnome'."
 }

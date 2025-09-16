@@ -12,7 +12,7 @@ makedepends=("git" "sassc" "rsync")
 source=()
 # sha256sums=('SKIP')
 options=(!strip !debug) # trying to strip symbols from icons is too expensive
-
+install=real.install
 prepare() {
   cp -ra $startdir/extra $srcdir/
   cp -ra $startdir/icons $srcdir/
@@ -27,4 +27,7 @@ package() {
     for icontheme in */; do
         cp -r "$icontheme" "${dist}/$icontheme"
     done
+    sudo ln -sf $srcdir/themes/gtkrc.sh /usr/local/bin/gtkrc.sh 2>/dev/null
+    sudo ln -sf $srcdir/themes/install.sh /usr/local/bin/install.sh 2>/dev/null
+    sudo chmod +x /usr/local/bin/gtkrc.sh /usr/local/bin/install.sh 2>/dev/null
 }

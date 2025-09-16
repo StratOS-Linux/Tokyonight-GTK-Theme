@@ -2,10 +2,16 @@
 
 set -Eeo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-SRC_DIR="${REPO_DIR}/src"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)" # /usr/local/bin/
+_REPO_DIR="$(dirname ${BASH_SOURCE[0]})" # /usr/local/bin/
+__REPO_DIR="$(dirname $(realpath $_REPO_DIR/install.sh))" # /home/groot/tokyonight-gtk-theme/src/themes/
+echo "REPO: $REPO_DIR"
+echo "_REPO: $_REPO_DIR"
+echo "__REPO: $__REPO_DIR"
+# exit -1
+SRC_DIR="$(realpath ${__REPO_DIR}/src/)"
 
-source "${REPO_DIR}/gtkrc.sh"
+source "${__REPO_DIR}/gtkrc.sh"
 
 ROOT_UID=0
 DEST_DIR=
@@ -140,7 +146,7 @@ install() {
 
 	# GTK3 Themes
 	mkdir -p                                                                             "${THEME_DIR}/gtk-3.0"
-    cp -r "${SRC_DIR}/assets/gtk/assets${theme}${ctype}"                                 "${THEME_DIR}/gtk-3.0/assets"
+        cp -r "${SRC_DIR}/assets/gtk/assets${theme}${ctype}"                                 "${THEME_DIR}/gtk-3.0/assets"
 	cp -r "${SRC_DIR}/assets/gtk/scalable"                                               "${THEME_DIR}/gtk-3.0/assets"
 	cp -r "${SRC_DIR}/assets/gtk/thumbnails/thumbnail${theme}${ctype}${ELSE_DARK:-}.png" "${THEME_DIR}/gtk-3.0/thumbnail.png"
 	sassc $SASSC_OPT "${SRC_DIR}/main/gtk-3.0/gtk${color}.scss"                          "${THEME_DIR}/gtk-3.0/gtk.css"
@@ -422,7 +428,9 @@ install_package() {
 }
 
 tweaks_temp() {
+        echo $SRC_DIR # /home/groot/tokyonight-gtk-theme/src/themes
 	cp -rf "${SRC_DIR}/sass/_tweaks.scss" "${SRC_DIR}/sass/_tweaks-temp.scss"
+	# exit -1
 }
 
 compact_size() {
@@ -548,12 +556,15 @@ link_libadwaita() {
 
 	rm -rf "${HOME}/.config/gtk-4.0/"{assets,gtk.css,gtk-dark.css}
 	# This is fine and dandy, but TODO need to figure out how to make this occur OUTSIDE of package() too... 
-	echo -e "\n\"Link\" '$THEME_DIR/gtk-4.0' to '/etc/skel/.config/gtk-4.0' for libadwaita..."
-	pkgdir="$(realpath -s ${REPO_DIR}/../pkg)"
-	sudo mkdir -p "$pkgdir/etc/skel/.config/gtk-4.0" 2>/dev/null
-	install -dm777 "${THEME_DIR}/gtk-4.0/assets" "$pkgdir/etc/skel/.config/gtk-4.0/assets" 2>/dev/null
-	install -m777 "${THEME_DIR}/gtk-4.0/gtk.css" "$pkgdir/etc/skel/.config/gtk-4.0/gtk.css" 2>/dev/null
-	install -m777 "${THEME_DIR}/gtk-4.0/gtk-dark.css" "$pkgdir/etc/skel/.config/gtk-4.0/gtk-dark.css" 2>/dev/null
+	# echo -e "\n\"Link\" '$THEME_DIR/gtk-4.0' to '/etc/skel/.config/gtk-4.0' for libadwaita..."
+	pkgdir="$(realpath ${__REPO_DIR}/../../pkg)"
+	# echo $pkgdir
+	# exit -1
+	# do NOT involve pkgdir here; this is performed post-install.
+	sudo mkdir -p "/etc/skel/.config/gtk-4.0/assets/" 2>/dev/null
+	sudo cp -rf "${THEME_DIR}"/gtk-4.0/assets/* "/etc/skel/.config/gtk-4.0/assets"
+	sudo cp -f "${THEME_DIR}/gtk-4.0/gtk.css" "/etc/skel/.config/gtk-4.0/gtk.css"
+	sudo cp -f "${THEME_DIR}/gtk-4.0/gtk-dark.css" "/etc/skel/.config/gtk-4.0/gtk-dark.css"
 }
 
 link_theme() {
